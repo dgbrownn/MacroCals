@@ -1,6 +1,6 @@
 class Calories:
 
-    def __init__(self, ht, wt, gender, activity_lvl):
+    def __init__(self, ht, wt, gender, age, activity_lvl):
        '''
         Init for Calories class
         :param ht: User height (in inches)
@@ -15,6 +15,7 @@ class Calories:
        self.weight = wt
        self.activity_lvl = activity_lvl
        self.gender = gender
+       self.age = age
        self.maint_cals = self.set_maintenance_cals()
        self.sed_def = self.sedentary_deficit()
        self.fts = self.fats()
@@ -23,40 +24,78 @@ class Calories:
 
     def set_height(self, ht):
         '''
-        Sets user's height based on created object
+        Sets user's height
         :param ht: User's height. Must not be zero.
-        :return: self.height (User's height param)
+        :return: User's height if check passes, raises TypeError if input is not an integer.
         '''
-        if self.height != 0:
-            self.height = ht
         if not isinstance(ht, int):
             raise TypeError(f'Invalid, enter height in inches')
+        if self.height != 0:
+            self.height = ht
         return self.height
 
     def get_height(self):
+        '''
+        Gets user's height
+        '''
         return self.height
 
     def set_weight(self, wt):
-        if self.weight != 0:
-            self.weight = wt
+        '''
+        Sets user's weight
+        :param wt: User's weight. Must not be zero
+        :return: User's weight if check passes, raises TypeError if input is not an integer.
+        '''
         if not isinstance(wt, int):
             raise TypeError(f'Invalid, enter weight to the nearest pound')
+        if self.weight != 0:
+            self.weight = wt
         return self.weight
 
     def get_weight(self):
+        '''
+        Gets user's height
+        '''
         return self.weight
 
     def set_gender(self, gender):
+        '''
+        :param gender: User's gender, must be a string and within the list 'valid'
+        Sets a user's gender if the user's input is within the list of valid gender options (male or female)
+        If user's input is not a valid option, raises ValueError
+        '''
         valid = ['male', 'female']
         if not isinstance(gender, str):
             raise TypeError
         for i in valid:
             if gender.lower() != i:
                 raise ValueError('Male or Female')
+        else:
+            self.gender = gender
         return self.gender
 
     def get_gender(self):
+        '''
+        Gets/returns user's gender
+        '''
         return self.gender
+
+    def set_age(self, age):
+        '''
+        :param age: User's age
+        Sets user's age if value is not 0 and is an integer
+        '''
+        if not isinstance(age, int):
+            raise TypeError('Must be a number')
+        if age != 0:
+            self.age = age
+        return self.age
+
+    def get_age(self):
+        '''
+        Gets/returns user's age
+        '''
+        return self.age
 
     def set_activity_level(self, activity_lvl):
         valid = ['sedentary', 'moderate', 'active']
@@ -70,44 +109,70 @@ class Calories:
     def get_activity_level(self):
         return self.activity_lvl
 
-    def set_maintenance_cals(self):
-        if self.weight != 0:
-            self.maint_cals = self.weight * 15
-        return self.maint_cals
+    def basal_metabolic_rate(self):
+        '''
+        Uses Harris-Benedict Formula to calculate a user's basal metabolic ratee (bmr)
+        Basal Metabolic Rate - Amount of energy (calories) a person needs to function while at rest
+        '''
+        if self.gender.lower() == 'female':
+            bmr = 655 + (4.35 * self.weight) + (4.7 * self.height) - (4.7 * self.age)
+        if self.gender.lower() == 'male':
+            bmr = 66 + (6.23 * self.weight) + (12.7 * self.height) - (6.8 * self.age)
+        bmr = round(bmr, 2)
+        return bmr
 
+    def set_maintenance_cals(self):
+        if not isinstance(self.basal_metabolic_rate(), float):
+            raise TypeError
+        if self.activity_lvl.lower() == 'active':
+            self.maint_cals = self.basal_metabolic_rate() * 1.725
+        if self.activity_lvl.lower() == 'moderate':
+            self.maint_cals = self.basal_metabolic_rate() * 1.55
+        if self.activity_lvl.lower() == 'sedentary':
+            self.maint_cals = self.basal_metabolic_rate() * 1.2
+        return round(self.maint_cals, 2)
+        
     def active_deficit(self):
         if self.activity_lvl == 'active':
             if self.maint_cals != 0:
                 self.active_def = self.maint_cals - 300
-            return (f'For a caloric deficit while being active\n (exercise 5-6 times per week), '
-                    f'your daily intake should be {self.active_def} calories.')
+            return round(self.active_def, 2)
 
     def moderate_deficit(self):
         if self.activity_lvl == 'moderate':
             if self.maint_cals != 0:
                 self.mod_def = self.maint_cals - 500
-            return (f'For a caloric deficit while being moderately active\n (exercise 3-5 times per week), '
-                    f'your daily intake should be {self.mod_def} calories')
+            return round(self.mod_def, 2)
 
     def sedentary_deficit(self):
         if self.activity_lvl == 'sedentary':
             if self.maint_cals != 0:
                 self.sed_def = self.maint_cals - 800
-            return (f'For a caloric deficit while being sedentary\nyour daily intake should be {self.sed_def} calories')
+            return round(self.sed_def, 2)
         
     def fats(self):
-        return int(self.weight * .4)
+        if self.maint_cals != 0:
+            return round(self.maint_cals * .20, 2)
     
     def protein(self):
-        return int(self.weight)
+        if self.maint_cals != 0:
+            return round((self.maint_cals * .3 / 4), 2)
     
     def carbohydrates(self):
-        return int(self.weight * 2)
+        if self.maint_cals != 0:
+            return round(self.maint_cals * .45, 2)
         
     def __str__(self):
-        return f'Maint cals: {self.maint_cals}\n{self.sed_def}\nFats: {self.fts}\nCarbs: {self.carbs}\nProtein: {self.ptn}'
+        deficit = ''
+        if self.activity_lvl.lower() == 'active':
+            deficit = self.active_deficit()
+        if self.activity_lvl.lower() == 'moderate':
+            deficit = self.moderate_deficit()
+        if self.activity_lvl.lower() == 'sedentary':
+            deficit = self.sedentary_deficit()
+        return f'Maint cals: {self.maint_cals} kcal\nDeficit: {deficit} kcal\nFats: {self.fts}g\nCarbs: {self.carbs}g\nProtein: {self.ptn}g'
 
 
 if __name__ == '__main__':
-    c = Calories(62, 260, 'male', 'sedentary')
-    print(c)
+    c = Calories(60, 120, 'female', 20, 'active')
+    print(c.__str__())
