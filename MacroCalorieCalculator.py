@@ -98,6 +98,10 @@ class Calories:
         return self.age
 
     def set_activity_level(self, activity_lvl):
+        '''
+        Sets a user's activity level if it is a valid option and of type string
+        valid = list of valid options for activity level
+        '''
         valid = ['sedentary', 'moderate', 'active']
         if not isinstance(activity_lvl, str):
             raise TypeError
@@ -107,6 +111,9 @@ class Calories:
         return self.activity_lvl
 
     def get_activity_level(self):
+        '''
+        Returns a user's activity level
+        '''
         return self.activity_lvl
 
     def basal_metabolic_rate(self):
@@ -122,6 +129,9 @@ class Calories:
         return bmr
 
     def set_maintenance_cals(self):
+        '''
+        Calculate's a user's maintenance calories based off their activity level and BMR
+        '''
         if not isinstance(self.basal_metabolic_rate(), float):
             raise TypeError
         if self.activity_lvl.lower() == 'active':
@@ -133,36 +143,86 @@ class Calories:
         return round(self.maint_cals, 2)
         
     def active_deficit(self):
-        if self.activity_lvl == 'active':
+        '''
+        Deficit's based off of activity level. Gradually decreases for each step 'up' in activity
+        I.E. Active activity level will require more calroies for a deficit than sedentary 
+        '''
+        if self.activity_lvl.lower() == 'active':
             if self.maint_cals != 0:
                 self.active_def = self.maint_cals - 300
             return round(self.active_def, 2)
 
     def moderate_deficit(self):
-        if self.activity_lvl == 'moderate':
+        '''
+        See active_deficit comment
+        '''
+        if self.activity_lvl.lower() == 'moderate':
             if self.maint_cals != 0:
                 self.mod_def = self.maint_cals - 500
             return round(self.mod_def, 2)
 
     def sedentary_deficit(self):
-        if self.activity_lvl == 'sedentary':
+        '''
+        See active_deficit comment
+        '''
+        if self.activity_lvl.lower() == 'sedentary':
             if self.maint_cals != 0:
                 self.sed_def = self.maint_cals - 800
             return round(self.sed_def, 2)
-        
+
+    def active_surplus(self):
+         '''
+        Surpluses based off of activity level. Gradually increases for each step 'up' in activity
+        I.E. Active activity level will require more calories for a surplus than sedentary 
+        '''
+         if self.activity_lvl.lower() == 'active':
+            if self.maint_cals != 0:
+                self.act_surplus = self.maint_cals + 800
+            return round(self.act_surplus, 2)
+
+    def moderate_surplus(self):
+        '''
+        See active_surplus comment
+        '''
+        if self.activity_lvl.lower() == 'moderate':
+            if self.maint_cals != 0:
+                self.mod_surplus = self.maint_cals + 500
+            return round(self.mod_surplus, 2)
+
+    def sedentary_surplus(self):
+        '''
+        See active_surplus comment
+        '''
+        if self.activity_lvl.lower() == 'sedentary':
+            if self.maint_cals != 0:
+                self.sed_surplus = self.maint_cals + 300
+            return round(self.sed_surplus, 2)
+
     def fats(self):
+        '''
+        Calculates fats based off suggested daily calorie intake percentages
+        '''
         if self.maint_cals != 0:
-            return round(self.maint_cals * .20, 2)
+            return round(self.maint_cals * .20 / 9, 2)
     
     def protein(self):
+        '''
+        Calculates protein based off suggested daily calorie intake percentages
+        '''
         if self.maint_cals != 0:
             return round((self.maint_cals * .3 / 4), 2)
     
     def carbohydrates(self):
+        '''
+        Calculates carbohydrates based off suggested daily calorie intake percentages
+        '''
         if self.maint_cals != 0:
-            return round(self.maint_cals * .45, 2)
+            return round(self.maint_cals * .45 / 4, 2)
         
     def __str__(self):
+        '''
+        Temporary str method for displaying output
+        '''
         deficit = ''
         if self.activity_lvl.lower() == 'active':
             deficit = self.active_deficit()
@@ -174,5 +234,5 @@ class Calories:
 
 
 if __name__ == '__main__':
-    c = Calories(60, 120, 'female', 20, 'active')
+    c = Calories(60, 200, 'male', 20, 'active')
     print(c.__str__())
