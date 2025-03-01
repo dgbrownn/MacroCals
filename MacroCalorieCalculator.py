@@ -1,6 +1,6 @@
 class Calories:
 
-    def __init__(self, ht, wt, gender, age, activity_lvl):
+    def __init__(self, goal, ht, wt, gender, age, activity_lvl):
        '''
         Init for Calories class
         :param ht: User height (in inches)
@@ -11,6 +11,7 @@ class Calories:
         - maint_cals: User's calculated maintenance calories (daily
         calorie intake to maintain bodyweight) called from function set_maintenance_cals.
         '''
+       self.goal = goal
        self.height = ht
        self.weight = wt
        self.activity_lvl = activity_lvl
@@ -21,6 +22,28 @@ class Calories:
        self.fts = self.fats()
        self.ptn = self.protein()
        self.carbs = self.carbohydrates()
+
+    def set_goal(self, goal):
+        '''
+        Allows a user to set their goals
+        If entry is in valid list, return self.goal
+        Otherwise, raise ValueError if not in the list
+        or TypeError if entry is not a string
+        '''
+        valid = ['lose weight', 'gain weight', 'waintain weight']
+        for i in valid:
+            if goal.lower() not in valid:
+                raise ValueError(f'Invalid entry, must be from the following choices:\nLose Weight, Gain Weight, or Maintain Weight')
+            elif not isinstance(goal, str):
+                raise TypeError(f'Must be a string')
+            else:
+                return self.goal
+    
+    def get_goal(self):
+        '''
+        Returns a user's goal
+        '''
+        return self.goal
 
     def set_height(self, ht):
         '''
@@ -147,56 +170,62 @@ class Calories:
         Deficit's based off of activity level. Gradually decreases for each step 'up' in activity
         I.E. Active activity level will require more calroies for a deficit than sedentary 
         '''
-        if self.activity_lvl.lower() == 'active':
-            if self.maint_cals != 0:
-                self.active_def = self.maint_cals - 300
-            return round(self.active_def, 2)
+        if self.goal.lower() == 'lose weight':
+            if self.activity_lvl.lower() == 'active':
+                if self.maint_cals != 0:
+                    self.active_def = self.maint_cals - 300
+                return round(self.active_def, 2)
 
     def moderate_deficit(self):
         '''
         See active_deficit comment
         '''
-        if self.activity_lvl.lower() == 'moderate':
-            if self.maint_cals != 0:
-                self.mod_def = self.maint_cals - 500
-            return round(self.mod_def, 2)
+        if self.goal.lower() == 'lose weight':
+            if self.activity_lvl.lower() == 'moderate':
+                if self.maint_cals != 0:
+                    self.mod_def = self.maint_cals - 500
+                return round(self.mod_def, 2)
 
     def sedentary_deficit(self):
         '''
         See active_deficit comment
         '''
-        if self.activity_lvl.lower() == 'sedentary':
-            if self.maint_cals != 0:
-                self.sed_def = self.maint_cals - 800
-            return round(self.sed_def, 2)
+        if self.goal.lower() == 'lose weight':
+            if self.activity_lvl.lower() == 'sedentary':
+                if self.maint_cals != 0:
+                    self.sed_def = self.maint_cals - 800
+                return round(self.sed_def, 2)
 
     def active_surplus(self):
          '''
         Surpluses based off of activity level. Gradually increases for each step 'up' in activity
         I.E. Active activity level will require more calories for a surplus than sedentary 
         '''
-         if self.activity_lvl.lower() == 'active':
-            if self.maint_cals != 0:
-                self.act_surplus = self.maint_cals + 800
-            return round(self.act_surplus, 2)
+         if self.goal.lower() == 'gain weight':
+            if self.activity_lvl.lower() == 'active':
+                if self.maint_cals != 0:
+                    self.act_surplus = self.maint_cals + 800
+                return round(self.act_surplus, 2)
 
     def moderate_surplus(self):
         '''
         See active_surplus comment
         '''
-        if self.activity_lvl.lower() == 'moderate':
-            if self.maint_cals != 0:
-                self.mod_surplus = self.maint_cals + 500
-            return round(self.mod_surplus, 2)
+        if self.goal.lower() == 'gain weight':
+            if self.activity_lvl.lower() == 'moderate':
+                if self.maint_cals != 0:
+                    self.mod_surplus = self.maint_cals + 500
+                return round(self.mod_surplus, 2)
 
     def sedentary_surplus(self):
         '''
         See active_surplus comment
         '''
-        if self.activity_lvl.lower() == 'sedentary':
-            if self.maint_cals != 0:
-                self.sed_surplus = self.maint_cals + 300
-            return round(self.sed_surplus, 2)
+        if self.goal.lower() == 'gain weight':
+            if self.activity_lvl.lower() == 'sedentary':
+                if self.maint_cals != 0:
+                    self.sed_surplus = self.maint_cals + 300
+                return round(self.sed_surplus, 2)
 
     def fats(self):
         '''
@@ -224,15 +253,27 @@ class Calories:
         Temporary str method for displaying output
         '''
         deficit = ''
-        if self.activity_lvl.lower() == 'active':
-            deficit = self.active_deficit()
-        if self.activity_lvl.lower() == 'moderate':
-            deficit = self.moderate_deficit()
-        if self.activity_lvl.lower() == 'sedentary':
-            deficit = self.sedentary_deficit()
-        return f'Maint cals: {self.maint_cals} kcal\nDeficit: {deficit} kcal\nFats: {self.fts}g\nCarbs: {self.carbs}g\nProtein: {self.ptn}g'
+        surplus = ''
+        if self.goal.lower() == 'lose weight':
+            if self.activity_lvl.lower() == 'active':
+                deficit = self.active_deficit()
+            if self.activity_lvl.lower() == 'moderate':
+                deficit = self.moderate_deficit()
+            if self.activity_lvl.lower() == 'sedentary':
+                deficit = self.sedentary_deficit()
+            return f'Maintenance calories: {self.maint_cals} kcal\nDeficit Calories: {deficit} kcal\nFats: {self.fts}g\nCarbs: {self.carbs}g\nProtein: {self.ptn}g'
+        elif self.goal.lower() == 'gain weight':
+            if self.activity_lvl.lower() == 'active':
+                surplus = self.active_surplus()
+            if self.activity_lvl.lower() == 'moderate':
+                surplus = self.moderate_surplus()
+            if self.activity_lvl.lower() == 'sedentary':
+                surplus = self.sedentary_deficit()
+            return f'Maintenance Calories: {self.maint_cals} kcal\nSurplus Calroies: {surplus} kcal\nFats: {self.fts}g\nCarbs: {self.carbs}g\nProtein: {self.ptn}g'
+        elif self.goal.lower() == 'maintain weight':
+            return f'Maintenance Calories: {self.maint_cals} kcal\nFats: {self.fts}g\nCarbs: {self.carbs}g\nProtein: {self.ptn}g'
 
 
 if __name__ == '__main__':
-    c = Calories(60, 200, 'male', 20, 'active')
+    c = Calories('lose weight', 60, 200, 'male', 20, 'active')
     print(c.__str__())
