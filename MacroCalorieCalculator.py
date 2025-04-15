@@ -30,7 +30,7 @@ class Calories:
         Otherwise, raise ValueError if not in the list
         or TypeError if entry is not a string
         '''
-        valid_goal = ['lose weight', 'gain weight', 'waintain weight']
+        valid_goal = ['lose weight', 'gain weight', 'maintain weight']
         if self.goal.lower() not in valid_goal:
                 raise ValueError(f'Invalid entry, must be from the following choices:\nLose Weight, Gain Weight, or Maintain Weight')
         if not isinstance(goal, str):
@@ -51,7 +51,7 @@ class Calories:
         '''
         if not isinstance(ht, int):
             raise TypeError(f'Invalid, enter height in inches')
-        if self.height != 0:
+        if self.height > 0:
             self.height = ht
         return self.height
 
@@ -69,7 +69,7 @@ class Calories:
         '''
         if not isinstance(wt, int):
             raise TypeError(f'Invalid, enter weight to the nearest pound')
-        if self.weight != 0:
+        if self.weight > 0:
             self.weight = wt
         return self.weight
 
@@ -106,7 +106,7 @@ class Calories:
         '''
         if not isinstance(age, int):
             raise TypeError('Must be a number')
-        if age != 0:
+        if age > 0:
             self.age = age
         return self.age
 
