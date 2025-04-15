@@ -30,13 +30,16 @@ class CaloriesTesting(unittest.TestCase):
     
     def test_maintcals(self):
         '''
-        Test maintenance calorie calculationm ensuring calculation is as expected
+        Test maintenance calorie calculation ensuring calculation is as expected
         '''
         bmr = self.mc.basal_metabolic_rate()
         expected_maint_cals = round(bmr * 1.55, 2)
         self.assertEqual(self.mc.set_maintenance_cals(), expected_maint_cals)
     
     def test_deficits(self):
+        '''
+        Test each deficit to ensure calculation is as expected
+        '''
         maint_cals = self.mc.set_maintenance_cals()
         expected_active_def = round(maint_cals - 300, 2)
         expected_moderate_def = round(maint_cals - 500, 2)
@@ -46,6 +49,9 @@ class CaloriesTesting(unittest.TestCase):
         self.assertEqual(self.mc.sedentary_deficit(), expected_sedentary_def)
     
     def test_surplus(self):
+        '''
+        Test each surplus to ensure calculation is as expected
+        '''
         maint_cals = self.mc.set_maintenance_cals()
         expected_active_surplus = round(maint_cals + 800, 2)
         expected_moderate_surplus = round(maint_cals + 500, 2)
@@ -55,6 +61,9 @@ class CaloriesTesting(unittest.TestCase):
         self.assertEqual(self.mc.sedentary_surplus(), expected_sedentary_surplus)
 
     def test_macros(self):
+        '''
+        Test each macronutrient calculation to ensure accuracy
+        '''
         maint_cals = self.mc.set_maintenance_cals()
         expected_fats = round((maint_cals * .3 / 4), 2)
         expected_carbs = round((maint_cals * .45 / 4), 2)
