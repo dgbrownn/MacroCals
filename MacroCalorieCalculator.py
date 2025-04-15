@@ -30,14 +30,12 @@ class Calories:
         Otherwise, raise ValueError if not in the list
         or TypeError if entry is not a string
         '''
-        valid = ['lose weight', 'gain weight', 'waintain weight']
-        for i in valid:
-            if goal.lower() not in valid:
+        valid_goal = ['lose weight', 'gain weight', 'waintain weight']
+        if self.goal.lower() not in valid_goal:
                 raise ValueError(f'Invalid entry, must be from the following choices:\nLose Weight, Gain Weight, or Maintain Weight')
-            elif not isinstance(goal, str):
-                raise TypeError(f'Must be a string')
-            else:
-                return self.goal
+        if not isinstance(goal, str):
+            raise TypeError(f'Must be a string')
+        return self.goal
     
     def get_goal(self):
         '''
@@ -87,14 +85,12 @@ class Calories:
         Sets a user's gender if the user's input is within the list of valid gender options (male or female)
         If user's input is not a valid option, raises ValueError
         '''
-        valid = ['male', 'female']
+        valid_gender = ['male', 'female']
         if not isinstance(gender, str):
             raise TypeError
-        for i in valid:
-            if gender.lower() != i:
-                raise ValueError('Male or Female')
-        else:
-            self.gender = gender
+        if gender.lower() not in valid_gender:
+            raise ValueError('Male or Female')
+        self.gender = gender
         return self.gender
 
     def get_gender(self):
@@ -125,12 +121,11 @@ class Calories:
         Sets a user's activity level if it is a valid option and of type string
         valid = list of valid options for activity level
         '''
-        valid = ['sedentary', 'moderate', 'active']
+        valid_activity_level = ['sedentary', 'moderate', 'active']
         if not isinstance(activity_lvl, str):
             raise TypeError
-        for i in valid:
-            if activity_lvl.lower() != i:
-                raise ValueError(f'Please select between sedentary, moderate, and active')
+        if activity_lvl.lower() not in valid_activity_level:
+            raise ValueError(f'Please select between sedentary, moderate, and active')
         return self.activity_lvl
 
     def get_activity_level(self):
@@ -268,12 +263,13 @@ class Calories:
             if self.activity_lvl.lower() == 'moderate':
                 surplus = self.moderate_surplus()
             if self.activity_lvl.lower() == 'sedentary':
-                surplus = self.sedentary_deficit()
+                surplus = self.sedentary_surplus()
             return f'Maintenance Calories: {self.maint_cals} kcal\nSurplus Calroies: {surplus} kcal\nFats: {self.fts}g\nCarbs: {self.carbs}g\nProtein: {self.ptn}g'
         elif self.goal.lower() == 'maintain weight':
             return f'Maintenance Calories: {self.maint_cals} kcal\nFats: {self.fts}g\nCarbs: {self.carbs}g\nProtein: {self.ptn}g'
 
 
 if __name__ == '__main__':
-    c = Calories('lose weight', 60, 200, 'male', 20, 'active')
+    c = Calories('maintain weight', 60, 200, 'male', 20, 'active')
     print(c.__str__())
+    
